@@ -1,0 +1,32 @@
+{
+  "name": "exerc-form-valicacao",
+  "version": "1.0.0",
+  "description": "Criação de uma aplicação web  em Node.js que realiza o processamento de um formulario com validação",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vmedeir0s/exFormValidacao.git"
+  },
+  "keywords": [
+    "HTTP",
+    "POST",
+    "JavaScript",
+    "Node",
+    "Express"
+  ],
+  "author": "Vinicius Medeiros",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/vmedeir0s/xFormValidacao/issues"
+  },
+  "homepage": "https://github.com/vmedeir0s/exFormValidacao#readme",
+  "dependencies": {
+    "express": "^4.21.1",
+    "nodemon": "^3.1.7"
+  }
+}
