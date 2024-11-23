@@ -26,6 +26,7 @@
   },
   "homepage": "https://github.com/vmedeir0s/exFormValidacao#readme",
   "dependencies": {
+    "@vercel/node": "^3.2.26",
     "cookie-parser": "^1.4.7",
     "express": "^4.21.1",
     "express-session": "^1.18.1",
