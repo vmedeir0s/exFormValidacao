@@ -433,6 +433,8 @@ app.get('/listaprodutos', (_req, res) => {
                   <td scope="row">${produtos_DB[i].descProd}</td>
                   <td scope="row">${produtos_DB[i].pcustoProd}</td>
                   <td scope="row">${produtos_DB[i].pvendaProd}</td>
+                  <td scope="row">${produtos_DB[i].dataValid}</td>
+                  <td scope="row">${produtos_DB[i].estoque}</td>
                   <td scope="row">${produtos_DB[i].fornecedor}</td>
                 </tr>
     `);
@@ -460,6 +462,7 @@ app.get('/listaprodutos', (_req, res) => {
       </body>
     </html>
   `);
+  res.end();
 });
 
 app.listen(PORT, () => {
