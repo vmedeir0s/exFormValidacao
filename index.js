@@ -1,8 +1,22 @@
 import express from 'express';
+import session from 'express-session';
+
 const PORT = 3000;
 
 const app = express();
 
+app.use(
+  session({
+    secret: 'tok3nSecret0',
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+      secure: false,
+      httpOnly: true,
+      maxAge: 1000 * 60 * 30,
+    },
+  })
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('./pages/public'));
