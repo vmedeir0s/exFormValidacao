@@ -1,10 +1,12 @@
 import express from 'express';
 import session from 'express-session';
 import cookieParser from 'cookie-parser';
+import path from 'path';
 
 const PORT = 3000;
 
 const app = express();
+const __dirname = path.dirname(new URL(import.meta.url).pathname);
 
 app.use(
   session({
@@ -21,7 +23,7 @@ app.use(
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static('./public'));
+app.use(express.static(path.join(__dirname, '/public')));
 
 var produtos_DB = [];
 
