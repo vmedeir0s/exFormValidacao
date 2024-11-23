@@ -1,5 +1,6 @@
 import express from 'express';
 import session from 'express-session';
+import cookieParser from 'cookie-parser';
 
 const PORT = 3000;
 
@@ -17,6 +18,7 @@ app.use(
     },
   })
 );
+app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('./pages/public'));
@@ -77,7 +79,7 @@ function verificaAutenticacao(req, res, next) {
   }
 }
 
-app.get('/login', (_req, res) => {
+app.get('/login', (req, res) => {
   res.redirect('/login.html');
 });
 
@@ -85,7 +87,11 @@ app.post('/login', (req, res) => {
   const { usuario, senha } = req.body;
 
   if (usuario == 'admin' && senha === '123') {
-    req.session.usuarioLogado = ture;
+    req.session.usuarioLogado = true;
+    res.cookie('ultimoLogin', new Date().toLocaleString(), {
+      maxAge: 1000 * 60 * 60 * 24 * 30,
+      httpOnly: true,
+    });
     res.redirect('/');
   } else {
     res.send(`
@@ -122,7 +128,8 @@ app.post('/login', (req, res) => {
   }
 });
 
-app.get('/', verificaAutenticacao, (_req, res) => {
+app.get('/', verificaAutenticacao, (req, res) => {
+  const ultimoLogin = req.cookies['ultimoLogin'];
   res.send(`
     <!DOCTYPE html>
     <html lang="pt-br">
@@ -141,11 +148,13 @@ app.get('/', verificaAutenticacao, (_req, res) => {
       <body>
         <div class="container mt-1 flex-column align-items-center">
           <nav class="navbar navbar-light border-bottom">
-            <div class="container-fluid justify-content-start">
+            <div class="container-fluid d-flex justify-content-center">
               <a href="/" class="px-3">Início</a>
               <a href="/cadastrarproduto" class="px-3">Cadastrar Produto</a>
               <a href="/listaprodutos" class="px-3">Listar Produtos</a>
+              <a href="/logout" class="px-3">Sair</a>
             </div>
+            <p class="px-3 mb-0 d-flex align-items-center">Ultimo acesso: ${ultimoLogin}</p>
           </nav>
           <footer class="mt-5 text-center">
             <p>
@@ -168,7 +177,8 @@ app.get('/', verificaAutenticacao, (_req, res) => {
   `);
 });
 
-app.get('/cadastrarproduto', verificaAutenticacao, (_req, res) => {
+app.get('/cadastrarproduto', verificaAutenticacao, (req, res) => {
+  const ultimoLogin = req.cookies['ultimoLogin'];
   res.send(`
     <!DOCTYPE html>
     <html lang="pt-br">
@@ -187,11 +197,13 @@ app.get('/cadastrarproduto', verificaAutenticacao, (_req, res) => {
       <body>
         <div class="container mt-1 flex-column align-items-center">
           <nav class="navbar navbar-light border-bottom">
-            <div class="container-fluid justify-content-start">
+            <div class="container-fluid d-flex justify-content-center">
               <a href="/" class="px-3">Início</a>
               <a href="/cadastrarproduto" class="px-3">Cadastrar Produto</a>
               <a href="/listaprodutos" class="px-3">Listar Produtos</a>
+              <a href="/logout" class="px-3">Sair</a>
             </div>
+            <p class="px-3 mb-0 d-flex align-items-center">Ultimo acesso: ${ultimoLogin}</p>
           </nav>
           <h1 class="text-center my-5">Cadastro de Produto</h1>
           <form method="POST" action="/cadastrarproduto">
@@ -250,6 +262,7 @@ app.get('/cadastrarproduto', verificaAutenticacao, (_req, res) => {
 });
 
 app.post('/cadastrarproduto', verificaAutenticacao, (req, res) => {
+  const ultimoLogin = req.cookies['ultimoLogin'];
   const {
     codBarras,
     descProd,
@@ -299,11 +312,13 @@ app.post('/cadastrarproduto', verificaAutenticacao, (req, res) => {
         <body>
           <div class="container mt-1 flex-column align-items-center">
             <nav class="navbar navbar-light border-bottom">
-              <div class="container-fluid justify-content-start">
+              <div class="container-fluid d-flex justify-content-center">
                 <a href="/" class="px-3">Início</a>
                 <a href="/cadastrarproduto" class="px-3">Cadastrar Produto</a>
                 <a href="/listaprodutos" class="px-3">Listar Produtos</a>
+                <a href="/logout" class="px-3">Sair</a>
               </div>
+              <p class="px-3 mb-0 d-flex align-items-center">Ultimo acesso: ${ultimoLogin}</p>
             </nav>
             <h1 class="text-center my-5">Cadastrado de Produtos</h1>
             <form method="POST" action="/cadastrarproduto">
@@ -412,7 +427,8 @@ app.post('/cadastrarproduto', verificaAutenticacao, (req, res) => {
   res.end();
 });
 
-app.get('/listaprodutos', verificaAutenticacao, (_req, res) => {
+app.get('/listaprodutos', verificaAutenticacao, (req, res) => {
+  const ultimoLogin = req.cookies['ultimoLogin'];
   res.write(`
     <!DOCTYPE html>
     <html lang="pt-br">
@@ -431,11 +447,13 @@ app.get('/listaprodutos', verificaAutenticacao, (_req, res) => {
       <body>
         <div class="container mt-1 flex-column align-items-center">
           <nav class="navbar navbar-light border-bottom">
-            <div class="container-fluid justify-content-start">
+            <div class="container-fluid d-flex justify-content-center">
               <a href="/" class="px-3">Início</a>
               <a href="/cadastrarproduto" class="px-3">Cadastrar Produto</a>
               <a href="/listaprodutos" class="px-3">Listar Produtos</a>
+              <a href="/logout" class="px-3">Sair</a>
             </div>
+            <p class="px-3 mb-0 d-flex align-items-center">Ultimo acesso: ${ultimoLogin}</p>
           </nav>
           <table class="table table-dark table-sm">
             <thead>
@@ -486,6 +504,11 @@ app.get('/listaprodutos', verificaAutenticacao, (_req, res) => {
     </html>
   `);
   res.end();
+});
+
+app.get('/logout', (req, res) => {
+  req.session.destroy();
+  res.redirect('/login.html');
 });
 
 app.listen(PORT, () => {
