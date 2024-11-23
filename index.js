@@ -69,6 +69,14 @@ const style = `
   </style>
 `;
 
+function verificaAutenticacao(req, res, next) {
+  if (req.session.usuarioLogado) {
+    next();
+  } else {
+    res.redirect('/login.html');
+  }
+}
+
 app.get('/login', (_req, res) => {
   res.redirect('/login.html');
 });
@@ -77,6 +85,7 @@ app.post('/login', (req, res) => {
   const { usuario, senha } = req.body;
 
   if (usuario == 'admin' && senha === '123') {
+    req.session.usuarioLogado = ture;
     res.redirect('/');
   } else {
     res.send(`
@@ -113,7 +122,7 @@ app.post('/login', (req, res) => {
   }
 });
 
-app.get('/', (_req, res) => {
+app.get('/', verificaAutenticacao, (_req, res) => {
   res.send(`
     <!DOCTYPE html>
     <html lang="pt-br">
@@ -159,7 +168,7 @@ app.get('/', (_req, res) => {
   `);
 });
 
-app.get('/cadastrarproduto', (_req, res) => {
+app.get('/cadastrarproduto', verificaAutenticacao, (_req, res) => {
   res.send(`
     <!DOCTYPE html>
     <html lang="pt-br">
@@ -240,7 +249,7 @@ app.get('/cadastrarproduto', (_req, res) => {
   `);
 });
 
-app.post('/cadastrarproduto', (req, res) => {
+app.post('/cadastrarproduto', verificaAutenticacao, (req, res) => {
   const {
     codBarras,
     descProd,
@@ -403,7 +412,7 @@ app.post('/cadastrarproduto', (req, res) => {
   res.end();
 });
 
-app.get('/listaprodutos', (_req, res) => {
+app.get('/listaprodutos', verificaAutenticacao, (_req, res) => {
   res.write(`
     <!DOCTYPE html>
     <html lang="pt-br">
